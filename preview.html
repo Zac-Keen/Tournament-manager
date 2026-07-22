@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tournament Manager — Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-slate-950 font-sans text-slate-100 antialiased">
+  <aside class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-slate-800 bg-slate-950">
+    <div class="flex h-16 items-center gap-3 border-b border-slate-800 px-6">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-900/40">
+        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l3.5 7L12 4l3.5 6L19 3M5 21h14M8 21v-4m4 4v-4m4 4v-4"/></svg>
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-white">Tournament</h1>
+        <p class="text-xs text-slate-500">Manager Pro</p>
+      </div>
+    </div>
+    <nav class="flex-1 space-y-1 px-3 py-4" id="nav"></nav>
+    <div class="border-t border-slate-800 p-4">
+      <button class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 hover:bg-blue-500">+ New Tournament</button>
+    </div>
+  </aside>
+
+  <div class="pl-64">
+    <header class="sticky top-0 z-20 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
+      <div class="flex h-16 items-center justify-between px-8">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Dashboard</h2>
+          <p class="text-sm text-slate-500">Monitor and manage your active tournaments</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <input id="search" type="search" placeholder="Search tournaments..." class="w-72 rounded-lg border border-slate-800 bg-slate-900 py-2 pl-4 pr-4 text-sm text-slate-200 placeholder:text-slate-500 focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-slate-700 to-slate-800 text-sm font-semibold text-white ring-2 ring-slate-700">TM</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="px-8 py-8">
+      <section id="stats" class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"></section>
+      <section>
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-white">Ongoing Tournaments</h3>
+          <p id="count" class="mt-1 text-sm text-slate-500"></p>
+        </div>
+        <div id="tournaments" class="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const tournaments = [
+      { id: '1', name: 'Spring Championship 2026', game: 'Counter-Strike 2', format: 'Double Elimination', status: 'live', participants: 32, maxParticipants: 32, prizePool: 25000, progress: 68, startDate: 'Jul 10', endDate: 'Jul 20, 2026', location: 'Los Angeles, CA' },
+      { id: '2', name: 'Valorant Open Series', game: 'Valorant', format: 'Single Elimination', status: 'live', participants: 64, maxParticipants: 64, prizePool: 15000, progress: 42, startDate: 'Jul 12', endDate: 'Jul 22, 2026', location: 'Online' },
+      { id: '3', name: 'Regional Chess Masters', game: 'Chess', format: 'Swiss', status: 'live', participants: 48, maxParticipants: 64, prizePool: 8000, progress: 55, startDate: 'Jul 8', endDate: 'Jul 19, 2026', location: 'New York, NY' },
+      { id: '4', name: 'Summer Soccer Cup', game: 'FIFA 26', format: 'Round Robin', status: 'registration', participants: 28, maxParticipants: 32, prizePool: 5000, progress: 12, startDate: 'Jul 25', endDate: 'Aug 5, 2026', location: 'Online' },
+      { id: '5', name: 'Rocket League Grand Prix', game: 'Rocket League', format: 'Double Elimination', status: 'live', participants: 16, maxParticipants: 16, prizePool: 10000, progress: 81, startDate: 'Jul 5', endDate: 'Jul 18, 2026', location: 'Austin, TX' },
+    ]
+
+    const statusStyles = {
+      live: { label: 'Live', cls: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30', dot: 'bg-emerald-400 animate-pulse' },
+      registration: { label: 'Registration Open', cls: 'bg-blue-500/10 text-blue-400 ring-blue-500/30', dot: 'bg-blue-400' },
+    }
+
+    const navItems = ['Dashboard', 'Tournaments', 'Participants', 'Schedule', 'Settings']
+    document.getElementById('nav').innerHTML = navItems.map((item, i) =>
+      `<button class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${i === 0 ? 'bg-blue-600/10 text-blue-400' : 'text-slate-400 hover:bg-slate-900'}">${item}</button>`
+    ).join('')
+
+    function fmt(n) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n) }
+
+    function renderStats(list) {
+      const live = list.filter(t => t.status === 'live').length
+      const players = list.reduce((s, t) => s + t.participants, 0)
+      const pool = list.reduce((s, t) => s + t.prizePool, 0)
+      const cards = [
+        { title: 'Active Tournaments', value: list.length, sub: 'Currently running or open', accent: 'blue' },
+        { title: 'Live Now', value: live, sub: 'In progress right now', accent: 'emerald' },
+        { title: 'Total Players', value: players, sub: 'Across all active events', accent: 'violet' },
+        { title: 'Prize Pool', value: fmt(pool), sub: 'Combined active prizes', accent: 'amber' },
+      ]
+      document.getElementById('stats').innerHTML = cards.map(c => `
+        <div class="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <p class="text-sm font-medium text-slate-400">${c.title}</p>
+          <p class="mt-2 text-3xl font-bold text-white">${c.value}</p>
+          <p class="mt-1 text-xs text-slate-500">${c.sub}</p>
+        </div>`).join('')
+    }
+
+    function renderTournaments(list) {
+      document.getElementById('count').textContent = `${list.length} tournaments in progress or accepting registrations`
+      document.getElementById('tournaments').innerHTML = list.map(t => {
+        const s = statusStyles[t.status]
+        return `
+        <article class="flex flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 hover:border-slate-700">
+          <div class="border-b border-slate-800/80 px-5 py-4">
+            <div class="flex items-start justify-between gap-3">
+              <div><p class="text-xs font-medium uppercase tracking-wider text-slate-500">${t.game}</p>
+              <h3 class="mt-1 text-lg font-semibold text-white">${t.name}</h3></div>
+              <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${s.cls}">
+                <span class="h-1.5 w-1.5 rounded-full ${s.dot}"></span>${s.label}
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-1 flex-col gap-4 p-5">
+            <div class="grid grid-cols-2 gap-3 text-sm text-slate-400">
+              <span>${t.participants}/${t.maxParticipants} players</span>
+              <span class="font-medium text-amber-400/90">${fmt(t.prizePool)}</span>
+              <span>${t.startDate} – ${t.endDate}</span>
+              <span>${t.location}</span>
+            </div>
+            <div>
+              <div class="mb-1.5 flex justify-between text-xs"><span class="text-slate-500">Tournament progress</span><span class="text-slate-300">${t.progress}%</span></div>
+              <div class="h-2 rounded-full bg-slate-800"><div class="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400" style="width:${t.progress}%"></div></div>
+            </div>
+            <div class="flex items-center justify-between border-t border-slate-800/80 pt-4">
+              <div><p class="text-xs text-slate-500">Format</p><p class="text-sm font-medium text-slate-300">${t.format}</p></div>
+              <button class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-blue-600 hover:text-white">View Details</button>
+            </div>
+          </div>
+        </article>`
+      }).join('')
+    }
+
+    function filter() {
+      const q = document.getElementById('search').value.trim().toLowerCase()
+      const list = q ? tournaments.filter(t => [t.name, t.game, t.location].some(v => v.toLowerCase().includes(q))) : tournaments
+      renderStats(list)
+      renderTournaments(list)
+    }
+
+    document.getElementById('search').addEventListener('input', filter)
+    filter()
+  </script>
+</body>
+</html>

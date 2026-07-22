@@ -1,0 +1,108 @@
+import type { Tournament } from '../types/tournament'
+
+export const tournaments: Tournament[] = [
+  {
+    id: '1',
+    name: 'Spring Championship 2026',
+    game: 'Counter-Strike 2',
+    format: 'Double Elimination',
+    status: 'live',
+    participants: 32,
+    maxParticipants: 32,
+    prizePool: 25000,
+    progress: 68,
+    startDate: '2026-07-10',
+    endDate: '2026-07-20',
+    location: 'Los Angeles, CA',
+    organizer: 'Pro League Esports',
+  },
+  {
+    id: '2',
+    name: 'Valorant Open Series',
+    game: 'Valorant',
+    format: 'Single Elimination',
+    status: 'live',
+    participants: 64,
+    maxParticipants: 64,
+    prizePool: 15000,
+    progress: 42,
+    startDate: '2026-07-12',
+    endDate: '2026-07-22',
+    location: 'Online',
+    organizer: 'Riot Community',
+  },
+  {
+    id: '3',
+    name: 'Regional Chess Masters',
+    game: 'Chess',
+    format: 'Swiss',
+    status: 'live',
+    participants: 48,
+    maxParticipants: 64,
+    prizePool: 8000,
+    progress: 55,
+    startDate: '2026-07-08',
+    endDate: '2026-07-19',
+    location: 'New York, NY',
+    organizer: 'Chess Federation',
+  },
+  {
+    id: '4',
+    name: 'Summer Soccer Cup',
+    game: 'FIFA 26',
+    format: 'Round Robin',
+    status: 'registration',
+    participants: 28,
+    maxParticipants: 32,
+    prizePool: 5000,
+    progress: 12,
+    startDate: '2026-07-25',
+    endDate: '2026-08-05',
+    location: 'Online',
+    organizer: 'EA Sports Events',
+  },
+  {
+    id: '5',
+    name: 'Rocket League Grand Prix',
+    game: 'Rocket League',
+    format: 'Double Elimination',
+    status: 'live',
+    participants: 16,
+    maxParticipants: 16,
+    prizePool: 10000,
+    progress: 81,
+    startDate: '2026-07-05',
+    endDate: '2026-07-18',
+    location: 'Austin, TX',
+    organizer: 'Psyonix Official',
+  },
+  {
+    id: '6',
+    name: 'League of Legends Invitational',
+    game: 'League of Legends',
+    format: 'Round Robin',
+    status: 'upcoming',
+    participants: 8,
+    maxParticipants: 8,
+    prizePool: 50000,
+    progress: 0,
+    startDate: '2026-08-01',
+    endDate: '2026-08-15',
+    location: 'Seoul, South Korea',
+    organizer: 'Riot Games',
+  },
+]
+
+export function getOngoingTournaments(): Tournament[] {
+  return tournaments.filter((t) => t.status === 'live' || t.status === 'registration')
+}
+
+export function getStats() {
+  const ongoing = getOngoingTournaments()
+  return {
+    activeTournaments: ongoing.length,
+    totalPlayers: ongoing.reduce((sum, t) => sum + t.participants, 0),
+    totalPrizePool: ongoing.reduce((sum, t) => sum + t.prizePool, 0),
+    liveNow: ongoing.filter((t) => t.status === 'live').length,
+  }
+}
