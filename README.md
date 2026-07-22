@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tournament Manager
 
 A professional tournament management dashboard built with React, Vite, and Tailwind CSS.
@@ -42,3 +43,6 @@ src/
   data/         Sample tournament data
   types/        TypeScript types
 ```
+=======
+# Tournament-manager
+>>>>>>> afa1d8c9c1a67d7e9e92cbe625abb95a4b7f6cde
