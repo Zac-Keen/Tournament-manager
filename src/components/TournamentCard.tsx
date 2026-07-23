@@ -5,6 +5,7 @@ import { StatusBadge } from './StatusBadge'
 interface TournamentCardProps {
   tournament: Tournament
   onViewDetails?: (tournament: Tournament) => void
+  onRegister?: (tournament: Tournament) => void
 }
 
 function formatCurrency(amount: number): string {
@@ -22,9 +23,10 @@ function formatDateRange(start: string, end: string): string {
   return `${startDate.toLocaleDateString('en-US', opts)} – ${endDate.toLocaleDateString('en-US', { ...opts, year: 'numeric' })}`
 }
 
-export function TournamentCard({
+export function TournamentCard({  
   tournament,
   onViewDetails,
+  onRegister,
 }: TournamentCardProps) {
   const fillPercent = Math.min(tournament.progress, 100)
 
@@ -86,13 +88,25 @@ export function TournamentCard({
             <p className="text-xs text-slate-500">Format</p>
             <p className="text-sm font-medium text-slate-300">{tournament.format}</p>
           </div>
+          <div className="flex gap-2">
+
+          <button
+            type="button"
+            onClick={() => onRegister?.(tournament)}
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
+          >
+            Register
+          </button>
+
           <button
             type="button"
             onClick={() => onViewDetails?.(tournament)}
-            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:bg-blue-600 hover:text-white"
+            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-blue-600 hover:text-white"
           >
             View Details
           </button>
+
+</div>
         </div>
       </div>
     </article>

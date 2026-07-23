@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import RegisterTeamModal from "./components/RegisterTeamModal";
 import { Radio, Trophy, Users, Wallet } from 'lucide-react'
 import { Header, Sidebar } from './components/Layout'
 import { StatCard } from './components/StatCard'
@@ -16,6 +17,7 @@ function formatCurrency(amount: number): string {
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activePage, setActivePage] = useState('dashboard')
+  const [registerOpen, setRegisterOpen] = useState(false)
   const [selectedTournament, setSelectedTournament] = useState<any>(null)
   const stats = getStats()
   const ongoingTournaments = getOngoingTournaments()
@@ -104,6 +106,10 @@ export default function App() {
                 setSelectedTournament(tournament)
                 setActivePage("tournament-details")
               }}
+              onRegister={(tournament) => {
+                setSelectedTournament(tournament)
+                setRegisterOpen(true)
+              }}
             />
           ))}
         </div>
@@ -131,6 +137,10 @@ export default function App() {
             onViewDetails={(tournament) => {
               setSelectedTournament(tournament)
               setActivePage("tournament-details")
+            }}
+            onRegister={(tournament) => {
+              setSelectedTournament(tournament)
+              setRegisterOpen(true)
             }}
           />
         ))}
@@ -182,7 +192,11 @@ export default function App() {
       </div>
     </section>
   )}
-
+  <RegisterTeamModal
+  open={registerOpen}
+  onClose={() => setRegisterOpen(false)}
+  tournament={selectedTournament}
+/>
 </main>
       </div>
     </div>
