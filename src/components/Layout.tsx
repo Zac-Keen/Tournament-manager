@@ -39,11 +39,13 @@ const navItems = [
 interface SidebarProps {
   activePage: string
   setActivePage: (page: string) => void
+  onCreateTournament: () => void
 }
 
 export function Sidebar({
   activePage,
   setActivePage,
+  onCreateTournament,
 }: SidebarProps) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-slate-800 bg-slate-950">
@@ -79,10 +81,11 @@ export function Sidebar({
       </nav>
 
       <div className="border-t border-slate-800 p-4">
-        <button
-          type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 transition-colors hover:bg-blue-500"
-        >
+      <button
+  type="button"
+  onClick={onCreateTournament}
+  className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 transition-colors hover:bg-blue-500"
+>
           <Plus className="h-4 w-4" />
           New Tournament
         </button>

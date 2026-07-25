@@ -4,7 +4,8 @@ import { Radio, Trophy, Users, Wallet } from 'lucide-react'
 import { Header, Sidebar } from './components/Layout'
 import { StatCard } from './components/StatCard'
 import { TournamentCard } from './components/TournamentCard'
-import { getOngoingTournaments, getStats } from './data/tournaments'
+import { getOngoingTournaments, getStats, tournaments } from './data/tournaments'
+import CreateTournamentModel from "./components/CreateTournamentModel"
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -17,29 +18,30 @@ function formatCurrency(amount: number): string {
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activePage, setActivePage] = useState('dashboard')
+  const [createTournamentOpen, setCreateTournamentOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [selectedTournament, setSelectedTournament] = useState<any>(null)
   const stats = getStats()
-  const ongoingTournaments = getOngoingTournaments()
 
   const filteredTournaments = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    if (!query) return ongoingTournaments
+    if (!query) return tournaments
 
-    return ongoingTournaments.filter(
+    return tournaments.filter(
       (t) =>
         t.name.toLowerCase().includes(query) ||
         t.game.toLowerCase().includes(query) ||
         t.location.toLowerCase().includes(query) ||
         t.organizer.toLowerCase().includes(query),
     )
-  }, [ongoingTournaments, searchQuery])
+  }, [tournaments, searchQuery])
 
   return (
     <div className="min-h-screen bg-slate-950">
-      <Sidebar
+     <Sidebar
   activePage={activePage}
   setActivePage={setActivePage}
+  onCreateTournament={() => setCreateTournamentOpen(true)}
 />
 
       <div className="pl-64">
@@ -198,6 +200,10 @@ export default function App() {
   tournament={selectedTournament}
 />
 </main>
+<CreateTournamentModel
+  open={createTournamentOpen}
+  onClose={() => setCreateTournamentOpen(false)}
+/>
       </div>
     </div>
   )
