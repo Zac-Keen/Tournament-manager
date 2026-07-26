@@ -21,5 +21,18 @@
     "tailwindcss": "^4.1.8",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"
-  }
+  },
+  "description": "<<<<<<< HEAD\r # Tournament Manager",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zac-Keen/Tournament-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zac-Keen/Tournament-manager/issues"
+  },
+  "homepage": "https://github.com/Zac-Keen/Tournament-manager#readme"
 }
