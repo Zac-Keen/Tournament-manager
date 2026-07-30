@@ -1,3 +1,4 @@
+import { supabase } from "../supabase";
 import { useState } from "react"
 import { Upload, X } from "lucide-react"
 
@@ -250,31 +251,37 @@ export default function CreateTournamentModel({
               Cancel
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                console.log({
-                  tournamentName,
-                  game,
-                  teamSize,
-                  format,
-                  maxTeams,
-                  entryFee,
-                  prizePool,
-                  registrationEnd,
-                  startDate,
-                  description,
-                })
+           <button
+  type="button"
+  onClick={async () => {
+    const { error } = await supabase.from("tournaments").insert([
+      {
+        name: tournamentName,
+        game,
+        team_size: Number(teamSize),
+        format,
+        max_teams: Number(maxTeams),
+        entry_fee: Number(entryFee),
+        prize_pool: prizePool,
+        registration_end: registrationEnd,
+        start_date: startDate,
+        description,
+      },
+    ]);
 
-                alert("Tournament Created Successfully!")
+    if (error) {
+      console.error(error);
+      alert("Failed to create tournament!");
+      return;
+    }
 
-                onClose()
-              }}
-              className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500"
-            >
-              Create Tournament
-            </button>
-
+    alert("Tournament Created Successfully!");
+    onClose();
+  }}
+  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500"
+>
+  Create Tournament
+</button>
           </div>
 
         </div>
