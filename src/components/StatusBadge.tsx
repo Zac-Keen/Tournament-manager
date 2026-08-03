@@ -9,11 +9,11 @@ const statusConfig: Record<
     className: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30',
     dotClassName: 'bg-emerald-400 animate-pulse',
   },
-  registration: {
-    label: 'Registration Open',
-    className: 'bg-blue-500/10 text-blue-400 ring-blue-500/30',
-    dotClassName: 'bg-blue-400',
-  },
+ registration: {
+  label: 'Registration Open',
+  className: 'bg-blue-500/10 text-blue-400 ring-blue-500/30',
+  dotClassName: 'bg-emerald-400 animate-pulse',
+},
   upcoming: {
     label: 'Upcoming',
     className: 'bg-amber-500/10 text-amber-400 ring-amber-500/30',

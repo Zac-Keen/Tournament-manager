@@ -4,8 +4,9 @@ import { Radio, Trophy, Users, Wallet } from 'lucide-react'
 import { Header, Sidebar } from './components/Layout'
 import { StatCard } from './components/StatCard'
 import { TournamentCard } from './components/TournamentCard'
-import { getOngoingTournaments, getStats, tournaments } from './data/tournaments'
 import CreateTournamentModel from "./components/CreateTournamentModel"
+import { useEffect, } from "react";
+import { supabase } from "./supabase";
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -21,7 +22,47 @@ export default function App() {
   const [createTournamentOpen, setCreateTournamentOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [selectedTournament, setSelectedTournament] = useState<any>(null)
-  const stats = getStats()
+const [tournaments, setTournaments] = useState<any[]>([]);
+useEffect(() => {
+  loadTournaments();
+}, []);
+
+async function loadTournaments() {
+  const { data, error } = await supabase
+    .from("tournaments")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  console.log("Data:", data);
+  console.log("Error:", error);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setTournaments(
+   (data || []).map((t) => ({
+  ...t,
+  status: "registration", // <-- Add this
+  prizePool: t.prize_pool,
+  teamSize: t.team_size,
+  entryFee: t.entry_fee,
+  maxTeams: t.max_teams,
+  startDate: t.start_date,
+  registrationEnd: t.registration_end,
+}))
+  );
+}
+const stats = {
+  activeTournaments: tournaments.length,
+  liveNow: 0,
+  totalPlayers: 0,
+  totalPrizePool: tournaments.reduce(
+    (sum: number, t: any) => sum + (t.prize_pool || 0),
+    0
+  ),
+};
 
   const filteredTournaments = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -203,6 +244,7 @@ export default function App() {
 <CreateTournamentModel
   open={createTournamentOpen}
   onClose={() => setCreateTournamentOpen(false)}
+  onTournamentCreated={loadTournaments}
 />
       </div>
     </div>

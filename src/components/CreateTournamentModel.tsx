@@ -5,11 +5,13 @@ import { Upload, X } from "lucide-react"
 interface CreateTournamentModelProps {
   open: boolean
   onClose: () => void
+  onTournamentCreated: () => void
 }
 
 export default function CreateTournamentModel({
   open,
   onClose,
+  onTournamentCreated,
 }: CreateTournamentModelProps) {
   const [tournamentName, setTournamentName] = useState("")
   const [game, setGame] = useState("")
@@ -275,8 +277,9 @@ export default function CreateTournamentModel({
       return;
     }
 
-    alert("Tournament Created Successfully!");
-    onClose();
+   alert("Tournament Created Successfully!");
+onTournamentCreated();
+onClose();
   }}
   className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500"
 >
