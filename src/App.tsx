@@ -7,6 +7,7 @@ import { TournamentCard } from './components/TournamentCard'
 import CreateTournamentModel from "./components/CreateTournamentModel"
 import { useEffect, } from "react";
 import { supabase } from "./supabase";
+import AdminLogin from "./components/AdminLogin";
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -17,14 +18,27 @@ function formatCurrency(amount: number): string {
 }
 
 export default function App() {
+  const [session, setSession] = useState<any>(null);
+  const [showLogin, setShowLogin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('')
   const [activePage, setActivePage] = useState('dashboard')
   const [createTournamentOpen, setCreateTournamentOpen] = useState(false)
   const [registerOpen, setRegisterOpen] = useState(false)
   const [selectedTournament, setSelectedTournament] = useState<any>(null)
-const [tournaments, setTournaments] = useState<any[]>([]);
-useEffect(() => {
-  loadTournaments();
+  const [tournaments, setTournaments] = useState<any[]>([]);
+
+  useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session);
+  });
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
+
+  return () => subscription.unsubscribe();
 }, []);
 
 async function loadTournaments() {
@@ -82,7 +96,13 @@ const stats = {
      <Sidebar
   activePage={activePage}
   setActivePage={setActivePage}
-  onCreateTournament={() => setCreateTournamentOpen(true)}
+  onCreateTournament={() => {
+    if (session) {
+      setCreateTournamentOpen(true);
+    } else {
+      setShowLogin(true);
+    }
+  }}
 />
 
       <div className="pl-64">
@@ -246,6 +266,11 @@ const stats = {
   onClose={() => setCreateTournamentOpen(false)}
   onTournamentCreated={loadTournaments}
 />
+{showLogin && (
+  <AdminLogin
+    onSuccess={() => setShowLogin(false)}
+  />
+)}
       </div>
     </div>
   )
