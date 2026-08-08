@@ -26,11 +26,18 @@ export default function App() {
   const [registerOpen, setRegisterOpen] = useState(false)
   const [selectedTournament, setSelectedTournament] = useState<any>(null)
   const [tournaments, setTournaments] = useState<any[]>([]);
+  
+  async function handleLogout() {
+  await supabase.auth.signOut();
+}
 
-  useEffect(() => {
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    setSession(session);
-  });
+ useEffect(() => {
+  async function checkSession() {
+    const { data } = await supabase.auth.getSession();
+    setSession(data.session);
+  }
+
+  checkSession();
 
   const {
     data: { subscription },
@@ -106,7 +113,21 @@ const stats = {
 />
 
       <div className="pl-64">
-        <Header searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+    <div className="relative">
+  <Header
+    searchQuery={searchQuery}
+    onSearchChange={setSearchQuery}
+  />
+
+  {session && (
+    <button
+      onClick={handleLogout}
+      className="absolute right-8 top-4 z-50 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white"
+    >
+      Logout
+    </button>
+  )}
+</div>
 
         <main className="px-8 py-8">
 
